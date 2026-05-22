@@ -1,25 +1,27 @@
-# SmartBank — Banking System
+# 🏦 Bank Management System
 
-A Spring Boot banking application with JWT auth, MySQL, email alerts, PDF statements, and an AI-powered chatbot.
+A full-stack banking web application with secure JWT authentication, real-time transactions, PDF bank statements, and an AI-assisted chatbot.
 
+
+
+## 🛠️ Tech Stack
+- **Backend:** Java 17, Spring Boot, Spring Security
+- **Database:** MySQL
+- **Authentication:** JWT (JSON Web Token)
+- **Frontend:** HTML, CSS, JavaScript
+- **Other:** Docker, iText PDF(Coming soon) , JavaMail
+
+## ✨ Features
+- ✅ User Registration & Login (JWT secured)
+- ✅ Check Account Balance
+- ✅ Deposit & Withdraw Funds
+- ✅ Fund Transfer between accounts
+- ✅ Transaction History
+- ✅ PDF Bank Statement (emailed automatically)
+- ✅ AI Chatbot with identity verification before any action
+
+## 🚀 How to Run
 ## Quick Start (Docker)
-
-```bash
-# 1. Clone and enter directory
-git clone <your-repo-url>
-cd banking-fixed
-
-# 2. Set environment variables
-cp .env.example .env
-# Edit .env with your DB password, email credentials, JWT secret
-
-# 3. Start everything
-docker-compose up -d
-
-# 4. Open in browser
-open http://localhost:8080
-```
-
 ## Local Dev (without Docker)
 
 **Prerequisites:** Java 17, Maven, MySQL 8
@@ -100,7 +102,7 @@ The chatbot understands natural language:
 - Transaction PIN for debit/transfer
 - Push notifications (Firebase)
 - Paginated transaction history
-- Scheduled statements (weekly/monthly email)
+- Scheduled statements (weekly/monthly email)(Coming SOON)
 - Account freezing / KYC status
 
 ### Code Quality
@@ -115,4 +117,81 @@ The chatbot understands natural language:
 - Add Prometheus metrics (`/actuator/prometheus`)
 - Add Redis for session/token blacklisting on logout
 - Use environment-specific profiles (`dev`, `prod`)
-- Add CI/CD pipeline (GitHub Actions)
+- Add CI/CD pipeline (GitHub Actio
+```bash
+# 1. Clone and enter directory
+git clone <your-repo-url>
+cd banking-fixed
+
+# 2. Set environment variables
+cp .env.example .env
+# Edit .env with your DB password, email credentials, JWT secret
+
+# 3. Start everything
+docker-compose up -d
+
+# 4. Open in browser
+open http://localhost:8080
+### Prerequisites
+- Java 17
+- MySQL
+- Maven
+
+### Steps
+1. Clone the repo
+```bash
+   git clone https://github.com/sayandwip2004ghosh/BankManagementSystem.git
+```
+2. Create a `.env` file from `.env.example` and fill in your MySQL and email credentials
+3. Run the app
+```bash
+   ./mvnw spring-boot:run
+```
+4. Open browser → `http://localhost:8080`
+
+### Or run with Docker
+```bash
+docker-compose up --build
+```
+
+## 📸 Screenshots
+
+
+### 🏠 Home / Login
+<img width="1918" height="915" alt="image" src="https://github.com/user-attachments/assets/cdb0e0c4-16a5-4447-a2ec-b9a307a6ef9f" />
+
+### 📊 Dashboard
+<img width="1917" height="920" alt="image" src="https://github.com/user-attachments/assets/42ca9fcd-02db-4506-beca-f6da34aa4e43" />
+
+### 💰 Balance / Transactions
+<img width="971" height="652" alt="image" src="https://github.com/user-attachments/assets/e2d8f0bc-1243-4bd5-81e6-a4265eb27d27" />
+<img width="1077" height="468" alt="image" src="https://github.com/user-attachments/assets/3c9bcc9e-b866-4222-8140-1356752e7393" />
+
+### 🔄 Transfer / Deposit / Withdraw
+<img width="675" height="407" alt="image" src="https://github.com/user-attachments/assets/0c79ef86-62ad-4fd1-9467-e028a5cda336" />
+<img width="661" height="481" alt="image" src="https://github.com/user-attachments/assets/351b0dc8-dda0-4678-a18f-5696a937096a" />
+<img width="820" height="480" alt="image" src="https://github.com/user-attachments/assets/1f79fd25-4fa8-42ec-b87c-329b4daecbb8" />
+
+### 🤖 Chatbot
+<img width="1916" height="806" alt="image" src="https://github.com/user-attachments/assets/19e5e657-7b62-401a-9109-631c3abcc209" />
+<img width="1918" height="828" alt="image" src="https://github.com/user-attachments/assets/cbb2bb3e-e4a1-43b9-87b7-0ce057c83587" />
+
+
+## 👨‍💻 Author
+**Sayandwip Ghosh**  
+[GitHub](https://github.com/sayandwip2004ghosh)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ns)
