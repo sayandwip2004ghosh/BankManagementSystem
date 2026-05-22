@@ -174,7 +174,10 @@ docker-compose up --build
 
 ### 🤖 Chatbot
 <img width="1916" height="806" alt="image" src="https://github.com/user-attachments/assets/19e5e657-7b62-401a-9109-631c3abcc209" />
-###Transaction
+
+
+
+###Transaction History
 <img width="1918" height="828" alt="image" src="https://github.com/user-attachments/assets/cbb2bb3e-e4a1-43b9-87b7-0ce057c83587" />
 
 
