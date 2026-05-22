@@ -1,0 +1,81 @@
+<script>
+  const baseUrl = "http://localhost:8080";
+
+  const form = document.getElementById("debitForm");
+  const successMsg = document.getElementById("successMsg");
+  const errorMsg = document.getElementById("errorMsg");
+  const submitBtn = form.querySelector("button");
+
+  // Auto-fill account number
+  window.addEventListener("load", () => {
+    const savedAccountNumber = localStorage.getItem("accountNumber");
+    if (savedAccountNumber) {
+      document.getElementById("debitAccountNumber").value = savedAccountNumber;
+    }
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    successMsg.style.display = "none";
+    errorMsg.style.display = "none";
+
+    const accountNumber = document.getElementById("debitAccountNumber").value;
+    const amount = parseFloat(document.getElementById("debitAmount").value);
+
+    // Validation
+    if (!accountNumber || isNaN(amount) || amount <= 0) {
+      errorMsg.textContent = "✗ Please enter a valid account number and amount.";
+      errorMsg.style.display = "block";
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      errorMsg.textContent = "✗ Session expired. Please login again.";
+      errorMsg.style.display = "block";
+      return;
+    }
+
+    const data = { accountNumber, amount };
+
+    // Button loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
+
+    try {
+      const res = await fetch(`${baseUrl}/api/user/debit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        successMsg.textContent = `✓ ${result.responseMessage}`;
+        successMsg.style.display = "block";
+
+        form.reset();
+
+        const savedAccountNumber = localStorage.getItem("accountNumber");
+        if (savedAccountNumber) {
+          document.getElementById("debitAccountNumber").value = savedAccountNumber;
+        }
+      } else {
+        errorMsg.textContent = `✗ ${result.responseMessage || "Transaction failed"}`;
+        errorMsg.style.display = "block";
+      }
+    } catch (err) {
+      errorMsg.textContent = "✗ Server error. Please try again later.";
+      errorMsg.style.display = "block";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<i class="fas fa-check-circle"></i> Withdraw Now`;
+    }
+  });
+</script>

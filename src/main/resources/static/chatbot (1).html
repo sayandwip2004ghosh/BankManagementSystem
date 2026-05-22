@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SmartBank Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy:   #0f2557;
+      --blue:   #1a3a8f;
+      --teal:   #0eb6a4;
+      --light:  #e8eef9;
+      --bg:     #f0f4fc;
+      --white:  #ffffff;
+      --text:   #1a2340;
+      --muted:  #6b7a9e;
+      --border: #d4ddf0;
+      --green:  #0eb87a;
+      --red:    #e0354b;
+      --shadow: 0 4px 24px rgba(15,37,87,0.10);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: var(--text);
+    }
+
+    /* ── Nav ── */
+    nav {
+      background: var(--navy);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(15,37,87,0.25);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      text-decoration: none;
+    }
+    .logo-badge {
+      background: var(--teal);
+      color: white;
+      font-weight: 800;
+      font-size: .85rem;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: .5px;
+    }
+    .logo-name {
+      color: white;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+    .logo-sub {
+      color: rgba(255,255,255,.5);
+      font-size: .7rem;
+      font-weight: 500;
+      display: block;
+      margin-top: -2px;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .nav-link {
+      color: rgba(255,255,255,.65);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 500;
+      transition: color .15s;
+    }
+    .nav-link:hover { color: white; }
+    .nav-link.active { color: var(--teal); font-weight: 700; }
+    .nav-logout {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      color: white;
+      padding: .38rem .9rem;
+      border-radius: 6px;
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .15s;
+    }
+    .nav-logout:hover { background: rgba(255,255,255,.18); }
+
+    /* ── Layout ── */
+    .layout {
+      flex: 1;
+      display: flex;
+      gap: 1.4rem;
+      padding: 1.4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .scard {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.1rem;
+    }
+    .scard-title {
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--muted);
+      margin-bottom: .85rem;
+    }
+    .topic {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+      width: 100%;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .55rem .85rem;
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text);
+      font-family: inherit;
+      margin-bottom: .4rem;
+      transition: all .15s;
+    }
+    .topic:last-child { margin-bottom: 0; }
+    .topic:hover { background: var(--light); border-color: var(--blue); color: var(--blue); }
+    .topic .ico { font-size: .95rem; width: 18px; }
+
+    .action-topics .topic { border-color: #d0daf8; }
+    .action-topics .topic:hover { background: #edf1ff; border-color: var(--blue); }
+
+    .notice-card {
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      color: rgba(255,255,255,.75);
+      font-size: .78rem;
+      line-height: 1.6;
+    }
+    .notice-card strong { color: white; display: block; margin-bottom: .3rem; font-size: .82rem; }
+
+    /* ── Chat window ── */
+    .chat-win {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      min-height: 0;
+    }
+
+    .chat-hdr {
+      background: linear-gradient(135deg, var(--navy) 0%, #1e4096 100%);
+      padding: .85rem 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+      flex-shrink: 0;
+    }
+    .bot-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--teal);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: white;
+      flex-shrink: 0;
+    }
+    .hdr-name { color: white; font-weight: 700; font-size: .95rem; }
+    .hdr-sub  { color: rgba(255,255,255,.55); font-size: .72rem; }
+    .pulse { width: 9px; height: 9px; background: #2ecc71; border-radius: 50%; margin-left: auto; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,.5)} 50%{box-shadow:0 0 0 5px rgba(46,204,113,0)} }
+
+    /* ── Messages ── */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: .8rem;
+      background: #f7f9ff;
+    }
+    #messages::-webkit-scrollbar { width: 4px; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .msg { display: flex; flex-direction: column; max-width: 80%; gap: .2rem; animation: fadeUp .2s ease; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+    .msg.bot  { align-self: flex-start; }
+    .msg.user { align-self: flex-end; }
+
+    .bubble {
+      padding: .8rem 1.1rem;
+      border-radius: 14px;
+      font-size: .88rem;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+    .msg.bot  .bubble {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 3px;
+      box-shadow: 0 1px 5px rgba(0,0,0,.06);
+    }
+    .msg.user .bubble {
+      background: linear-gradient(135deg, var(--navy), #1e4096);
+      color: white;
+      border-bottom-right-radius: 3px;
+    }
+    .ts { font-size: .68rem; color: var(--muted); padding: 0 .2rem; }
+    .msg.user .ts { text-align: right; }
+
+    /* Result cards */
+    .result-card {
+      margin-top: .55rem;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      border-radius: 11px;
+      padding: 1rem 1.2rem;
+      color: white;
+      text-align: center;
+    }
+    .result-card .rc-lbl { font-size: .72rem; opacity: .7; margin-bottom: .2rem; }
+    .result-card .rc-val { font-size: 1.6rem; font-weight: 800; }
+    .result-card .rc-sub { font-size: .75rem; opacity: .65; margin-top: .15rem; }
+
+    /* Step guide */
+    .guide-step {
+      padding: .3rem 0;
+      border-bottom: 1px solid var(--light);
+      font-size: .85rem;
+      display: flex;
+      gap: .5rem;
+    }
+    .guide-step:last-child { border: none; }
+    .step-n { font-weight: 700; color: var(--blue); flex-shrink: 0; min-width: 22px; }
+
+    /* Tags */
+    .tag-ok  { display:inline-block; background:var(--green); color:white; border-radius:10px; padding:.15rem .65rem; font-size:.75rem; font-weight:700; }
+    .tag-err { display:inline-block; background:var(--red);   color:white; border-radius:10px; padding:.15rem .65rem; font-size:.75rem; font-weight:700; }
+    .tag-inf { display:inline-block; background:var(--teal);  color:white; border-radius:10px; padding:.15rem .65rem; font-size:.75rem; font-weight:700; }
+
+    /* Auth prompt card */
+    .auth-card {
+      background: #fff8e1;
+      border: 1.5px solid #f5c842;
+      border-radius: 11px;
+      padding: 1rem 1.1rem;
+      margin-top: .45rem;
+      font-size: .85rem;
+    }
+    .auth-card .ac-title { font-weight: 700; color: #7d5a00; margin-bottom: .6rem; display:flex; align-items:center; gap:.4rem; }
+    .auth-card input {
+      width: 100%;
+      border: 1.5px solid #e0d4a0;
+      border-radius: 7px;
+      padding: .55rem .85rem;
+      font-size: .85rem;
+      font-family: inherit;
+      color: var(--text);
+      margin-bottom: .5rem;
+      outline: none;
+      background: white;
+      transition: border .15s;
+    }
+    .auth-card input:focus { border-color: var(--blue); }
+    .auth-card .auth-btn {
+      width: 100%;
+      padding: .6rem;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .15s;
+    }
+    .auth-card .auth-btn:hover { background: var(--blue); }
+    .auth-card .auth-btn:disabled { opacity: .6; cursor: not-allowed; }
+
+    /* Transfer dest prompt */
+    .dest-card {
+      background: var(--light);
+      border: 1.5px solid var(--border);
+      border-radius: 11px;
+      padding: 1rem 1.1rem;
+      margin-top: .45rem;
+    }
+    .dest-card input {
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      padding: .55rem .85rem;
+      font-size: .85rem;
+      font-family: inherit;
+      color: var(--text);
+      margin-bottom: .5rem;
+      outline: none;
+      background: white;
+      transition: border .15s;
+    }
+    .dest-card input:focus { border-color: var(--blue); }
+    .dest-card .dest-btn {
+      width: 100%;
+      padding: .6rem;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .dest-card .dest-btn:hover { opacity: .88; }
+
+    /* Typing */
+    .typing-wrap { align-self: flex-start; display: none; }
+    .typing-wrap.show { display: flex; }
+    .typing-bubble {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      border-bottom-left-radius: 3px;
+      padding: .75rem 1rem;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      box-shadow: 0 1px 5px rgba(0,0,0,.06);
+    }
+    .td { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; animation: tdot .9s infinite; }
+    .td:nth-child(2){ animation-delay:.2s; }
+    .td:nth-child(3){ animation-delay:.4s; }
+    @keyframes tdot{ 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+    /* Quick chips */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      padding: .8rem 1.2rem;
+      border-top: 1px solid var(--light);
+      background: #f7f9ff;
+      flex-shrink: 0;
+    }
+    .chip {
+      padding: .35rem .85rem;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: white;
+      color: var(--text);
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .chip:hover { background: var(--light); border-color: var(--blue); color: var(--blue); }
+
+    /* Input bar */
+    .input-bar {
+      display: flex;
+      gap: .6rem;
+      padding: .85rem 1.2rem;
+      border-top: 1px solid var(--border);
+      background: white;
+      flex-shrink: 0;
+      align-items: center;
+    }
+    .input-bar input {
+      flex: 1;
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      padding: .65rem 1.1rem;
+      font-size: .9rem;
+      outline: none;
+      font-family: inherit;
+      color: var(--text);
+      transition: border .18s;
+    }
+    .input-bar input:focus { border-color: var(--blue); }
+    .send-btn {
+      width: 42px;
+      height: 42px;
+      background: var(--navy);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background .15s;
+    }
+    .send-btn:hover { background: var(--blue); }
+    .send-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    a.link { color: var(--teal); font-weight: 600; text-decoration: none; }
+    a.link:hover { text-decoration: underline; }
+
+    @media(max-width:680px){ .sidebar{display:none;} .layout{padding:.8rem;} }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="logo-badge">SB</div>
+    <div>
+      <div class="logo-name">SmartBank</div>
+      <span class="logo-sub">Assistant</span>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="transaction.html" class="nav-link">Statements</a>
+    <a href="chatbot.html" class="nav-link active">Help</a>
+    <button class="nav-logout" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="scard">
+      <div class="scard-title">ℹ️ Info & Guides</div>
+      <button class="topic" onclick="ask('How do I check my balance?')"><span class="ico">💰</span>Check Balance</button>
+      <button class="topic" onclick="ask('How do I transfer money?')"><span class="ico">↕️</span>Transfer Money</button>
+      <button class="topic" onclick="ask('How do I deposit money?')"><span class="ico">⬆️</span>Deposit Money</button>
+      <button class="topic" onclick="ask('How do I withdraw money?')"><span class="ico">⬇️</span>Withdraw Money</button>
+      <button class="topic" onclick="ask('How do I view my transaction history?')"><span class="ico">📋</span>Transactions</button>
+      <button class="topic" onclick="ask('How do I get my bank statement?')"><span class="ico">📄</span>Bank Statement</button>
+      <button class="topic" onclick="ask('My transaction failed, what do I do?')"><span class="ico">⚠️</span>Failed Transaction</button>
+    </div>
+    <div class="scard action-topics">
+      <div class="scard-title">⚡ Do It Now</div>
+      <button class="topic" onclick="startAction('balance')"><span class="ico">💰</span>Check Balance</button>
+      <button class="topic" onclick="startAction('credit')"><span class="ico">⬆️</span>Deposit Funds</button>
+      <button class="topic" onclick="startAction('debit')"><span class="ico">⬇️</span>Withdraw Funds</button>
+      <button class="topic" onclick="startAction('transfer')"><span class="ico">↕️</span>Transfer Funds</button>
+    </div>
+    <div class="notice-card">
+      <strong>🔒 Security</strong>
+      Actions require your account number and password every time. We never store your credentials.
+    </div>
+  </div>
+
+  <!-- Chat Window -->
+  <div class="chat-win">
+    <div class="chat-hdr">
+      <div class="bot-icon"><i class="fas fa-robot"></i></div>
+      <div>
+        <div class="hdr-name">SmartBank Assistant</div>
+        <div class="hdr-sub">Guidance · Secure Banking Actions</div>
+      </div>
+      <div class="pulse"></div>
+    </div>
+
+    <div id="messages">
+      <div class="msg bot">
+        <div class="bubble">
+          👋 Hi! I'm your <strong>SmartBank Assistant</strong>.<br><br>
+          I can <strong>guide you</strong> on how to use the app, or <strong>perform banking actions</strong> for you securely.<br><br>
+          For actions like checking balance, depositing, withdrawing, or transferring — I'll ask for your <strong>account number and password</strong> first, every time.<br><br>
+          How can I help you today?
+        </div>
+        <div class="ts">SmartBot</div>
+      </div>
+    </div>
+
+    <div class="typing-wrap" id="typingWrap">
+      <div class="typing-bubble"><div class="td"></div><div class="td"></div><div class="td"></div></div>
+    </div>
+
+    <div class="chips">
+      <div class="chip" onclick="ask('How do I check my balance?')">💰 Balance Guide</div>
+      <div class="chip" onclick="ask('How do I transfer money?')">↕️ Transfer Guide</div>
+      <div class="chip" onclick="ask('How do I view my transactions?')">📋 Transactions</div>
+      <div class="chip" onclick="startAction('balance')">⚡ Check Balance Now</div>
+      <div class="chip" onclick="startAction('transfer')">⚡ Transfer Now</div>
+      <div class="chip" onclick="ask('help')">❓ Help</div>
+    </div>
+
+    <div class="input-bar">
+      <input type="text" id="msgIn" placeholder='Ask a question or say "check balance", "deposit 5000"…' onkeydown="if(event.key==='Enter')sendMsg()"/>
+      <button class="send-btn" id="sendBtn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const BASE = "http://localhost:8080";
+
+/* ── Helpers ── */
+function now(){ return new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}); }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+const msgs = ()=> document.getElementById("messages");
+
+function addMsg(role, html, extraClass=""){
+  const box = msgs();
+  const d = document.createElement("div");
+  d.className = "msg "+role+(extraClass?" "+extraClass:"");
+  d.innerHTML = `<div class="bubble">${html}</div><div class="ts">${role==="user"?"You":"SmartBot"} · ${now()}</div>`;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+  return d;
+}
+function showTyping(){ document.getElementById("typingWrap").classList.add("show"); msgs().scrollTop=msgs().scrollHeight; }
+function hideTyping(){ document.getElementById("typingWrap").classList.remove("show"); }
+function setBusy(v){ document.getElementById("sendBtn").disabled=v; }
+
+/* ── Flow state machine ──
+   ST = null  →  normal mode
+   ST = { action, step, data: {} }
+   Steps: "auth_acno" → "auth_pass" → (action-specific steps) → done
+*/
+let ST = null;
+
+/* ── Guide responses (no auth needed) ── */
+const GUIDES = {
+  balance: {
+    kw: ['how.*balance','check.*balance','see.*balance','balance.*enquiry','view.*balance'],
+    html: `<strong>💰 How to Check Your Balance</strong><br><br>
+<div class="guide-step"><span class="step-n">1.</span>Go to the <a class="link" href="dashboard.html">Dashboard</a></div>
+<div class="guide-step"><span class="step-n">2.</span>Your balance is shown in the blue card at the top</div>
+<div class="guide-step"><span class="step-n">3.</span>Click <strong>Refresh</strong> to get the latest figure</div>
+<div class="guide-step"><span class="step-n">Or</span>Type <em>"check my balance"</em> here and I'll fetch it for you after verifying your identity 🔐</div>`
+  },
+  transfer: {
+    kw: ['how.*transfer','transfer.*guide','send money','fund transfer'],
+    html: `<strong>↕️ How to Transfer Money</strong><br><br>
+<div class="guide-step"><span class="step-n">1.</span>Go to the <a class="link" href="dashboard.html">Dashboard</a> → Transfer tab</div>
+<div class="guide-step"><span class="step-n">2.</span>Enter your <strong>Source Account</strong> number</div>
+<div class="guide-step"><span class="step-n">3.</span>Enter the <strong>Destination Account</strong> number</div>
+<div class="guide-step"><span class="step-n">4.</span>Enter the <strong>Amount</strong> and click Transfer Funds</div>
+<div class="guide-step"><span class="step-n">⚠️</span>Double-check the destination — transfers can't be reversed</div>
+<div class="guide-step"><span class="step-n">Or</span>Say <em>"transfer 1000 to 2026123456"</em> here and I'll do it for you securely 🔐</div>`
+  },
+  deposit: {
+    kw: ['how.*deposit','how.*credit','add money','how to deposit'],
+    html: `<strong>⬆️ How to Deposit Money</strong><br><br>
+<div class="guide-step"><span class="step-n">1.</span>Go to the <a class="link" href="dashboard.html">Dashboard</a> → Deposit tab</div>
+<div class="guide-step"><span class="step-n">2.</span>Your account number is pre-filled</div>
+<div class="guide-step"><span class="step-n">3.</span>Enter the <strong>Amount</strong> to deposit</div>
+<div class="guide-step"><span class="step-n">4.</span>Click <strong>Deposit Funds</strong> — balance updates instantly</div>
+<div class="guide-step"><span class="step-n">Or</span>Say <em>"deposit 5000"</em> here and I'll handle it 🔐</div>`
+  },
+  withdraw: {
+    kw: ['how.*withdraw','how.*debit','take out money','how to withdraw'],
+    html: `<strong>⬇️ How to Withdraw Money</strong><br><br>
+<div class="guide-step"><span class="step-n">1.</span>Go to the <a class="link" href="dashboard.html">Dashboard</a> → Withdraw tab</div>
+<div class="guide-step"><span class="step-n">2.</span>Enter your <strong>Account Number</strong></div>
+<div class="guide-step"><span class="step-n">3.</span>Enter the <strong>Amount</strong> to withdraw</div>
+<div class="guide-step"><span class="step-n">4.</span>Click <strong>Withdraw Funds</strong> — ensure sufficient balance</div>
+<div class="guide-step"><span class="step-n">Or</span>Say <em>"withdraw 2000"</em> here 🔐</div>`
+  },
+  transactions: {
+    kw: ['transaction','history','past.*transaction','recent.*transaction','view.*transaction','how.*statement'],
+    html: `<strong>📋 How to View Transaction History</strong><br><br>
+<div class="guide-step"><span class="step-n">1.</span>Go to <a class="link" href="transaction.html">Statements</a> (top nav)</div>
+<div class="guide-step"><span class="step-n">2.</span>Your account number is pre-filled</div>
+<div class="guide-step"><span class="step-n">3.</span>Set a <strong>Start Date</strong> and <strong>End Date</strong></div>
+<div class="guide-step"><span class="step-n">4.</span>Click <strong>Generate Statement</strong></div>
+<div class="guide-step"><span class="step-n">5.</span>Download as CSV using the button in the results</div>`
+  },
+  statement: {
+    kw: ['bank statement','pdf statement','download statement','get statement'],
+    html: `<strong>📄 How to Get Your Bank Statement (PDF)</strong><br><br>
+<div class="guide-step"><span class="step-n">1.</span>Go to <a class="link" href="transaction.html">Statements</a></div>
+<div class="guide-step"><span class="step-n">2.</span>Enter account number, start date, and end date</div>
+<div class="guide-step"><span class="step-n">3.</span>Click <strong>Generate Statement</strong></div>
+<div class="guide-step"><span class="step-n">4.</span>A PDF is automatically emailed to your registered address</div>
+<div class="guide-step"><span class="step-n">5.</span>Use <strong>Download CSV</strong> to export the data</div>`
+  },
+  failed: {
+    kw: ['failed','transaction failed','error','not working','problem','issue'],
+    html: `<strong>⚠️ Transaction Failed — What to Do</strong><br><br>
+<div class="guide-step"><span class="step-n">1.</span><strong>Insufficient balance</strong> — check your balance first</div>
+<div class="guide-step"><span class="step-n">2.</span><strong>Wrong account number</strong> — verify the destination</div>
+<div class="guide-step"><span class="step-n">3.</span><strong>Session expired</strong> — logout and login again</div>
+<div class="guide-step"><span class="step-n">4.</span><strong>Network error</strong> — check your connection and retry</div>
+<div class="guide-step"><span class="step-n">5.</span>Check <a class="link" href="transaction.html">Statements</a> to confirm if the transaction went through</div>`
+  }
+};
+
+function findGuide(text){
+  const s = text.toLowerCase();
+  for(const g of Object.values(GUIDES)){
+    if(g.kw.some(p=> new RegExp(p).test(s))) return g.html;
+  }
+  return null;
+}
+
+/* ── Intent parser for action triggers ── */
+function parseAction(text){
+  const s = text.toLowerCase();
+  const amtMatch = s.match(/[\d,]+(?:\.\d+)?/);
+  const amt = amtMatch ? parseFloat(amtMatch[0].replace(/,/g,"")) : null;
+  const acMatch = s.match(/to\s+(\d{6,})/);
+  const toAcc = acMatch ? acMatch[1] : null;
+
+  if(/\b(check|see|view|show|what.?s|get)\b.*\bbalance\b|\bbalance\b.*(check|enquiry)|my balance/.test(s))
+    return {action:"balance"};
+  if(/\b(deposit|credit|add)\b/.test(s))
+    return {action:"credit", amt};
+  if(/\b(withdraw|debit|take out)\b/.test(s))
+    return {action:"debit", amt};
+  if(/\b(transfer|send)\b/.test(s))
+    return {action:"transfer", amt, toAcc};
+  return null;
+}
+
+/* ── Auth flow ── */
+function buildAuthCard(actionLabel, onSubmit){
+  const d = document.createElement("div");
+  d.className = "msg bot";
+  d.innerHTML = `
+    <div class="bubble">
+      🔐 To <strong>${esc(actionLabel)}</strong>, please verify your identity first.
+      <div class="auth-card">
+        <div class="ac-title">🔒 Identity Verification</div>
+        <input type="text"     id="auth_acno" placeholder="Account Number" autocomplete="off"/>
+        <input type="password" id="auth_pass" placeholder="Password"       autocomplete="off"/>
+        <button class="auth-btn" id="auth_submit_btn" onclick="submitAuth()">Verify &amp; Continue →</button>
+      </div>
+    </div>
+    <div class="ts">SmartBot · ${now()}</div>`;
+  msgs().appendChild(d);
+  msgs().scrollTop = msgs().scrollHeight;
+  // Store callback
+  window.__authCallback = onSubmit;
+  setTimeout(()=>{ const el=document.getElementById("auth_acno"); if(el) el.focus(); }, 100);
+}
+
+function submitAuth(){
+  const acno = (document.getElementById("auth_acno")||{}).value?.trim();
+  const pass = (document.getElementById("auth_pass")||{}).value?.trim();
+  if(!acno || acno.length < 6){ showAuthError("Enter a valid account number (min 6 digits)."); return; }
+  if(!pass || pass.length < 1){ showAuthError("Enter your password."); return; }
+
+  const btn = document.getElementById("auth_submit_btn");
+  if(btn){ btn.disabled=true; btn.textContent="Verifying…"; }
+
+  window.__authCallback(acno, pass);
+}
+
+function showAuthError(msg){
+  const existing = document.getElementById("auth_err");
+  if(existing) existing.remove();
+  const btn = document.getElementById("auth_submit_btn");
+  if(btn){ btn.disabled=false; btn.textContent="Verify & Continue →"; }
+  const e = document.createElement("div");
+  e.id="auth_err";
+  e.style.cssText="color:#c0392b;font-size:.8rem;margin-bottom:.4rem;font-weight:600;";
+  e.textContent = "⚠️ "+msg;
+  if(btn) btn.before(e);
+}
+
+/* ── Login via API, then do action ── */
+async function loginAndDo(acno, pass, action){
+  try {
+    const r = await fetch(BASE+"/api/user/login", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({email: acno, password: pass}) // backend uses email for login
+    });
+    const d = await r.json();
+
+    if(!r.ok || !d.token){
+      // Try treating acno as account number by looking up — but login requires email.
+      // Show helpful error.
+      showAuthError("Login failed: " + (d.responseMessage || "Invalid credentials."));
+      return;
+    }
+
+    // Login success
+    const token = d.token;
+    const resolvedAccNo = d.accountInfo?.accountNumber || acno;
+    const name = d.accountInfo?.accountName || "";
+
+    // Dismiss auth card and confirm
+    addMsg("user", `[Identity verified — ${esc(resolvedAccNo)}]`);
+    hideTyping();
+    addMsg("bot", `✅ Identity verified! Hello <strong>${esc(name||resolvedAccNo)}</strong>. Processing your request…`);
+
+    showTyping(); await sleep(500); hideTyping();
+
+    // Execute the action
+    const AH = {"Content-Type":"application/json","Authorization":"Bearer "+token};
+    await executeAction(action, resolvedAccNo, token, AH);
+
+  } catch(err){
+    showAuthError("Server error. Is the backend running?");
+  }
+}
+
+async function executeAction(action, acNo, token, AH){
+  if(action.action === "balance"){
+    try{
+      const r = await fetch(BASE+"/api/user/balanceEnquiry",{method:"POST",headers:AH,body:JSON.stringify({accountNumber:acNo})});
+      const d = await r.json();
+      if(r.ok && d.accountInfo){
+        const bal = Number(d.accountInfo.accountBalance).toLocaleString("en-IN",{minimumFractionDigits:2});
+        addMsg("bot",`Balance fetched successfully! <span class="tag-ok">✓</span>
+          <div class="result-card">
+            <div class="rc-lbl">Current Balance</div>
+            <div class="rc-val">₹${bal}</div>
+            <div class="rc-sub">Acc: ${esc(acNo)}</div>
+          </div>`);
+      } else {
+        addMsg("bot",`❌ ${esc(d.responseMessage||"Could not fetch balance")} <span class="tag-err">Error</span>`);
+      }
+    } catch { addMsg("bot","❌ Server error while fetching balance."); }
+
+  } else if(action.action === "credit"){
+    if(!action.amt || action.amt <= 0){
+      // Ask for amount inline
+      ST = {waitingFor:"amt", next: (amt)=> executeAction({action:"credit",amt}, acNo, token, AH)};
+      promptInline("How much do you want to <strong>deposit</strong>? (₹)");
+      return;
+    }
+    try{
+      const r = await fetch(BASE+"/api/user/credit",{method:"POST",headers:AH,body:JSON.stringify({accountNumber:acNo,amount:action.amt})});
+      const d = await r.json();
+      if(r.ok) addMsg("bot",`✅ <strong>Deposit Successful!</strong> <span class="tag-ok">+₹${action.amt.toLocaleString("en-IN")}</span><br>${esc(d.responseMessage||"")}`);
+      else      addMsg("bot",`❌ ${esc(d.responseMessage||"Deposit failed")} <span class="tag-err">Failed</span>`);
+    } catch { addMsg("bot","❌ Server error."); }
+
+  } else if(action.action === "debit"){
+    if(!action.amt || action.amt <= 0){
+      ST = {waitingFor:"amt", next: (amt)=> executeAction({action:"debit",amt}, acNo, token, AH)};
+      promptInline("How much do you want to <strong>withdraw</strong>? (₹)");
+      return;
+    }
+    try{
+      const r = await fetch(BASE+"/api/user/debit",{method:"POST",headers:AH,body:JSON.stringify({accountNumber:acNo,amount:action.amt})});
+      const d = await r.json();
+      if(r.ok) addMsg("bot",`✅ <strong>Withdrawal Successful!</strong> <span class="tag-ok">-₹${action.amt.toLocaleString("en-IN")}</span><br>${esc(d.responseMessage||"")}`);
+      else      addMsg("bot",`❌ ${esc(d.responseMessage||"Withdrawal failed")} <span class="tag-err">Failed</span>`);
+    } catch { addMsg("bot","❌ Server error."); }
+
+  } else if(action.action === "transfer"){
+    if(!action.amt || action.amt <= 0){
+      ST = {waitingFor:"amt", next: (amt)=> executeAction({action:"transfer",amt,toAcc:action.toAcc}, acNo, token, AH)};
+      promptInline("How much do you want to <strong>transfer</strong>? (₹)");
+      return;
+    }
+    if(!action.toAcc){
+      ST = {waitingFor:"acc", next: (dest)=> executeAction({action:"transfer",amt:action.amt,toAcc:dest}, acNo, token, AH)};
+      promptInline("Enter the <strong>destination account number</strong>:");
+      return;
+    }
+    if(action.toAcc === acNo){
+      addMsg("bot","⚠️ You can't transfer to your own account."); return;
+    }
+    try{
+      const r = await fetch(BASE+"/api/user/transfer",{method:"POST",headers:AH,body:JSON.stringify({sourceAccountNumber:acNo,destinationAccountNumber:action.toAcc,amount:action.amt})});
+      const d = await r.json();
+      if(r.ok) addMsg("bot",`✅ <strong>Transfer Successful!</strong> <span class="tag-ok">↕️ ₹${action.amt.toLocaleString("en-IN")}</span><br>Sent to account <strong>${esc(action.toAcc)}</strong><br>${esc(d.responseMessage||"")}`);
+      else      addMsg("bot",`❌ ${esc(d.responseMessage||"Transfer failed")} <span class="tag-err">Failed</span>`);
+    } catch { addMsg("bot","❌ Server error."); }
+  }
+}
+
+function promptInline(html){
+  addMsg("bot", html + `<br><br><em style="font-size:.8rem;color:var(--muted)">Type your answer and press Enter or Send.</em>`);
+}
+
+/* ── startAction: called from sidebar or chips ── */
+function startAction(action){
+  let label = {balance:"check your balance",credit:"deposit funds",debit:"withdraw funds",transfer:"transfer funds"}[action];
+  addMsg("user", {balance:"Check my balance",credit:"Deposit funds",debit:"Withdraw funds",transfer:"Transfer funds"}[action]);
+  const pending = {action, amt:null, toAcc:null};
+  buildAuthCard(label, (acno, pass)=> loginAndDo(acno, pass, pending));
+}
+
+/* ── Main message handler ── */
+async function sendMsg(){
+  const inp = document.getElementById("msgIn");
+  const text = inp.value.trim(); if(!text) return;
+  inp.value = ""; setBusy(true);
+  addMsg("user", esc(text));
+
+  // If waiting for a follow-up (amount/account after auth)
+  if(ST && ST.waitingFor){
+    hideTyping();
+    if(ST.waitingFor === "amt"){
+      const n = parseFloat(text.replace(/[^0-9.]/g,""));
+      if(!n || n <= 0){ addMsg("bot","⚠️ Please enter a valid amount (numbers only)."); setBusy(false); return; }
+      const cb = ST.next; ST = null;
+      showTyping(); await sleep(400); hideTyping();
+      await cb(n);
+    } else if(ST.waitingFor === "acc"){
+      const acc = text.trim().replace(/\s/g,"");
+      if(acc.length < 6){ addMsg("bot","⚠️ Invalid account number — must be at least 6 digits."); setBusy(false); return; }
+      const cb = ST.next; ST = null;
+      showTyping(); await sleep(400); hideTyping();
+      await cb(acc);
+    }
+    setBusy(false); inp.focus(); return;
+  }
+
+  showTyping(); await sleep(500);
+
+  // 1. Check for action intent first
+  const actionIntent = parseAction(text);
+  if(actionIntent){
+    hideTyping();
+    let label = {balance:"check your balance",credit:"deposit funds",debit:"withdraw funds",transfer:"transfer funds"}[actionIntent.action];
+    buildAuthCard(label, (acno, pass)=> loginAndDo(acno, pass, actionIntent));
+    setBusy(false); inp.focus(); return;
+  }
+
+  // 2. Check for guide/info intent
+  const guide = findGuide(text);
+  if(guide){
+    hideTyping();
+    addMsg("bot", guide);
+    setBusy(false); inp.focus(); return;
+  }
+
+  // 3. Help
+  if(/\bhelp\b|what can you do|commands/.test(text.toLowerCase())){
+    hideTyping();
+    addMsg("bot",`<strong>Here's what I can do:</strong><br><br>
+📖 <strong>Guides</strong> — just ask how: "how do I check balance", "how to transfer", "how to deposit"<br><br>
+⚡ <strong>Banking Actions</strong> — I'll verify your identity then act:<br>
+&nbsp;&nbsp;&nbsp;• "check my balance"<br>
+&nbsp;&nbsp;&nbsp;• "deposit 5000"<br>
+&nbsp;&nbsp;&nbsp;• "withdraw 2000"<br>
+&nbsp;&nbsp;&nbsp;• "transfer 1000 to 2026123456"<br><br>
+<em style="font-size:.82rem;color:var(--muted)">Or use the sidebar buttons for one-click access.</em>`);
+    setBusy(false); inp.focus(); return;
+  }
+
+  // 4. Fallback
+  hideTyping();
+  addMsg("bot",`I'm not sure about that. Try asking a question like <em>"how do I transfer money?"</em>, or say something like <em>"check balance"</em> or <em>"deposit 500"</em>. Type <strong>help</strong> to see everything I can do.`);
+  setBusy(false); inp.focus();
+}
+
+function ask(text){
+  document.getElementById("msgIn").value = text;
+  sendMsg();
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href = "index.html";
+}
+
+window.onload = ()=>{
+  setTimeout(()=>{
+    const name = localStorage.getItem("accountName") || "";
+    const greeting = name ? `👋 Hello <strong>${esc(name)}</strong>!` : "👋 Hello!";
+    addMsg("bot", `${greeting} I'm your SmartBank Assistant. Ask me <em>how to do</em> something, or say something like <strong>"check my balance"</strong> and I'll guide you through a secure verification. How can I help?`);
+  }, 300);
+};
+</script>
+</body>
+</html>

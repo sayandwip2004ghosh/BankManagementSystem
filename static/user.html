@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Management - Banking System</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      margin: 0;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: white;
+    }
+
+    header h1 {
+      color: #667eea;
+    }
+
+    .logout {
+      background: red;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    main {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-bottom: 0.8rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 6px;
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+    }
+
+    .msg {
+      margin-bottom: 0.8rem;
+      padding: 0.5rem;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Banking Admin Panel</h1>
+  <button class="logout" onclick="logout()">Logout</button>
+</header>
+
+<main>
+
+  <!-- Balance -->
+  <div class="card">
+    <h3>Balance</h3>
+    <div id="balMsg" class="msg"></div>
+    <input id="balAcc" placeholder="Account Number">
+    <button onclick="getBalance(this)">Check Balance</button>
+  </div>
+
+  <!-- Name -->
+  <div class="card">
+    <h3>Name Enquiry</h3>
+    <div id="nameMsg" class="msg"></div>
+    <input id="nameAcc">
+    <button onclick="getName(this)">Get Name</button>
+  </div>
+
+  <!-- Credit -->
+  <div class="card">
+    <h3>Credit</h3>
+    <div id="creditMsg" class="msg"></div>
+    <input id="creditAcc">
+    <input id="creditAmt" type="number" placeholder="Amount">
+    <button onclick="credit(this)">Credit</button>
+  </div>
+
+  <!-- Debit -->
+  <div class="card">
+    <h3>Debit</h3>
+    <div id="debitMsg" class="msg"></div>
+    <input id="debitAcc">
+    <input id="debitAmt" type="number">
+    <button onclick="debit(this)">Debit</button>
+  </div>
+
+  <!-- Transfer -->
+  <div class="card">
+    <h3>Transfer</h3>
+    <div id="transferMsg" class="msg"></div>
+    <input id="fromAcc">
+    <input id="toAcc">
+    <input id="transferAmt" type="number">
+    <button onclick="transfer(this)">Transfer</button>
+  </div>
+
+</main>
+
+<script>
+const baseUrl = "http://localhost:8080";
+
+// Auth check
+if (!localStorage.getItem("token")) {
+  window.location.href = "login-modern.html";
+}
+
+// Autofill
+window.onload = () => {
+  const acc = localStorage.getItem("accountNumber");
+  if (acc) {
+    document.querySelectorAll("input[id$='Acc']").forEach(i => i.value = acc);
+    document.getElementById("fromAcc").value = acc;
+  }
+};
+
+function logout(){
+  localStorage.clear();
+  window.location.href="login-modern.html";
+}
+
+function showMsg(id, msg, success){
+  const el = document.getElementById(id);
+  el.style.display = "block";
+  el.className = `msg ${success ? "success":"error"}`;
+  el.textContent = msg;
+}
+
+async function apiCall(url, data, btn, msgId){
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(baseUrl + url,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":`Bearer ${localStorage.getItem("token")}`
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await (res.headers.get("content-type").includes("json") ? res.json() : res.text());
+
+    if(res.ok){
+      showMsg(msgId, result.responseMessage || result, true);
+    } else {
+      showMsg(msgId, result.responseMessage || result, false);
+    }
+
+  } catch {
+    showMsg(msgId,"Server error", false);
+  }
+
+  btn.disabled = false;
+}
+
+function getBalance(btn){
+  apiCall("/api/user/balanceEnquiry",
+    {accountNumber: balAcc.value},
+    btn,"balMsg"
+  );
+}
+
+function getName(btn){
+  apiCall("/api/user/nameEnquiry",
+    {accountNumber: nameAcc.value},
+    btn,"nameMsg"
+  );
+}
+
+function credit(btn){
+  apiCall("/api/user/credit",
+    {accountNumber: creditAcc.value, amount: +creditAmt.value},
+    btn,"creditMsg"
+  );
+}
+
+function debit(btn){
+  apiCall("/api/user/debit",
+    {accountNumber: debitAcc.value, amount: +debitAmt.value},
+    btn,"debitMsg"
+  );
+}
+
+function transfer(btn){
+  apiCall("/api/user/transfer",
+    {
+      sourceAccountNumber: fromAcc.value,
+      destinationAccountNumber: toAcc.value,
+      amount: +transferAmt.value
+    },
+    btn,"transferMsg"
+  );
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Check Balance - Sayandwip Banking System</title>
+    <!-- Developed by Sayandwip Ghosh | sayandwipghosh007@gmail.com -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 1.5rem 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      header h1 {
+        color: #667eea;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      header .dev-credit {
+        font-size: 0.75rem;
+        color: #888;
+        margin-top: 0.3rem;
+      }
+      nav {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 1rem 2rem;
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      nav a {
+        text-decoration: none;
+        color: #667eea;
+        font-weight: 600;
+        transition: all 0.3s;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+      }
+      nav a:hover { background: #667eea; color: white; }
+      main {
+        flex: 1;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .form-container {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+      }
+      .form-header { text-align: center; margin-bottom: 2rem; }
+      .form-header h2 { color: #333; font-size: 1.8rem; margin-bottom: 0.5rem; }
+      .form-header p { color: #666; font-size: 0.95rem; }
+      .form-group { margin-bottom: 1.5rem; }
+      label {
+        display: block;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        font-family: inherit;
+      }
+      input[type="text"]:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+      button {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 1.5rem;
+      }
+      button:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4); }
+      button:active { transform: translateY(0); }
+      .success-message {
+        background: #d4edda; color: #155724; padding: 1rem;
+        border-radius: 6px; margin-bottom: 1rem; display: none;
+        border: 1px solid #c3e6cb;
+      }
+      .error-message {
+        background: #f8d7da; color: #721c24; padding: 1rem;
+        border-radius: 6px; margin-bottom: 1rem; display: none;
+        border: 1px solid #f5c6cb;
+      }
+      .balance-display {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white; padding: 2rem; border-radius: 12px;
+        text-align: center; margin-top: 2rem; display: none;
+      }
+      .balance-display h3 { font-size: 0.95rem; opacity: 0.9; margin-bottom: 0.5rem; }
+      .balance-display .amount { font-size: 2.5rem; font-weight: bold; }
+      footer {
+        text-align: center; padding: 2rem; color: white;
+        background: rgba(0, 0, 0, 0.1);
+      }
+      @media (max-width: 768px) {
+        main { padding: 1rem; }
+        .form-container { padding: 1.5rem; }
+        .balance-display .amount { font-size: 2rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><i class="fas fa-university"></i> Sayandwip Banking</h1>
+      <div class="dev-credit">Developed by Sayandwip Ghosh &mdash; sayandwipghosh007@gmail.com</div>
+    </header>
+
+    <nav>
+      <a href="index.html"><i class="fas fa-home"></i> Home</a>
+      <a href="create-account.html"><i class="fas fa-user-plus"></i> Create Account</a>
+      <a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a>
+      <a href="balance-enquiry.html"><i class="fas fa-search"></i> Balance</a>
+      <a href="credit-amount.html"><i class="fas fa-plus-circle"></i> Credit</a>
+      <a href="debit-amount.html"><i class="fas fa-minus-circle"></i> Debit</a>
+      <a href="transfer-amount.html"><i class="fas fa-exchange-alt"></i> Transfer</a>
+    </nav>
+
+    <main>
+      <div class="form-container">
+        <div class="form-header">
+          <h2>Check Balance</h2>
+          <p>View your account balance instantly</p>
+        </div>
+
+        <div class="success-message" id="successMsg"></div>
+        <div class="error-message" id="errorMsg"></div>
+
+        <form id="balanceForm">
+          <div class="form-group">
+            <label for="balanceAccountNumber">
+              <i class="fas fa-credit-card"></i> Account Number *
+            </label>
+            <input
+              type="text"
+              id="balanceAccountNumber"
+              placeholder="Enter your account number"
+              required
+            />
+          </div>
+          <button type="submit">
+            <i class="fas fa-search"></i> Check Balance
+          </button>
+        </form>
+
+        <div class="balance-display" id="balanceDisplay">
+          <h3>Your Current Balance</h3>
+          <div class="amount" id="balanceAmount">₹ 0.00</div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Sayandwip Banking System. All rights reserved.</p>
+      <p style="margin-top: 0.4rem; font-size: 0.85rem; opacity: 0.8;">sayandwipghosh007@gmail.com</p>
+    </footer>
+
+    <script>
+      // Sayandwip Banking System
+      // Developer: Sayandwip Ghosh
+      // Contact: sayandwipghosh007@gmail.com
+
+      const baseUrl = "http://localhost:8080";
+
+      window.addEventListener("load", () => {
+        const savedAccountNumber = localStorage.getItem("accountNumber");
+        if (savedAccountNumber) {
+          document.getElementById("balanceAccountNumber").value = savedAccountNumber;
+        }
+      });
+
+      document.getElementById("balanceForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const successMsg = document.getElementById("successMsg");
+        const errorMsg = document.getElementById("errorMsg");
+        const balanceDisplay = document.getElementById("balanceDisplay");
+
+        successMsg.style.display = "none";
+        errorMsg.style.display = "none";
+        balanceDisplay.style.display = "none";
+
+        const accountNumber = document.getElementById("balanceAccountNumber").value;
+        const token = localStorage.getItem("token");
+
+        try {
+          const res = await fetch(`${baseUrl}/api/user/balanceEnquiry`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ accountNumber: accountNumber }),
+          });
+          const result = await res.json();
+
+          if (res.ok) {
+            const balance = result.accountInfo.accountBalance;
+            document.getElementById("balanceAmount").textContent =
+              `₹${balance.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            balanceDisplay.style.display = "block";
+            successMsg.textContent = `✓ Balance retrieved successfully!`;
+            successMsg.style.display = "block";
+          } else {
+            errorMsg.textContent = `✗ ${result.responseMessage || "Unable to fetch balance"}`;
+            errorMsg.style.display = "block";
+          }
+        } catch (err) {
+          errorMsg.textContent = "✗ Error checking balance. Please try again.";
+          errorMsg.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>

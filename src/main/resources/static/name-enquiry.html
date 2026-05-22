@@ -1,0 +1,210 @@
+```html
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account Name - Banking System</title>
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    body{
+      font-family:"Segoe UI",sans-serif;
+      background:linear-gradient(135deg,#667eea,#764ba2);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    header{
+      background:white;
+      padding:1.5rem;
+    }
+
+    header h1{color:#667eea;}
+
+    main{
+      flex:1;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:1rem;
+    }
+
+    .container{
+      background:white;
+      padding:2rem;
+      border-radius:10px;
+      width:100%;
+      max-width:400px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    input{
+      width:100%;
+      padding:0.7rem;
+      margin:10px 0;
+      border:1px solid #ccc;
+      border-radius:5px;
+    }
+
+    button{
+      width:100%;
+      padding:0.8rem;
+      background:#667eea;
+      color:white;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    button:disabled{
+      opacity:0.6;
+      cursor:not-allowed;
+    }
+
+    .success,.error{
+      display:none;
+      padding:10px;
+      margin-bottom:10px;
+      border-radius:5px;
+    }
+
+    .success{background:#d4edda;color:#155724;}
+    .error{background:#f8d7da;color:#721c24;}
+
+    .result{
+      margin-top:15px;
+      padding:15px;
+      text-align:center;
+      background:#667eea;
+      color:white;
+      border-radius:8px;
+      display:none;
+      font-size:1.3rem;
+      font-weight:bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1><i class="fas fa-university"></i> Banking System</h1>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="success" id="successMsg"></div>
+    <div class="error" id="errorMsg"></div>
+
+    <form id="nameForm">
+      <label>Account Number</label>
+      <input type="text" id="accountNumber" required/>
+
+      <button id="submitBtn">
+        <i class="fas fa-id-card"></i> Get Name
+      </button>
+    </form>
+
+    <div class="result" id="resultBox"></div>
+
+  </div>
+</main>
+
+<script>
+const baseUrl="http://localhost:8080";
+
+/* Session check */
+(function(){
+  const token=localStorage.getItem("token");
+  if(!token){
+    alert("Please login first");
+    window.location.href="index.html";
+  }
+})();
+
+/* Autofill */
+window.onload=()=>{
+  const acc=localStorage.getItem("accountNumber");
+  if(acc) document.getElementById("accountNumber").value=acc;
+};
+
+/* Auto hide */
+function autoHide(el){
+  setTimeout(()=>el.style.display="none",3000);
+}
+
+document.getElementById("nameForm").addEventListener("submit",async(e)=>{
+  e.preventDefault();
+
+  const btn=document.getElementById("submitBtn");
+  const success=document.getElementById("successMsg");
+  const error=document.getElementById("errorMsg");
+  const resultBox=document.getElementById("resultBox");
+
+  success.style.display="none";
+  error.style.display="none";
+  resultBox.style.display="none";
+
+  const accountNumber=document.getElementById("accountNumber").value.trim();
+  const token=localStorage.getItem("token");
+
+  if(!accountNumber){
+    error.textContent="✗ Account number required";
+    error.style.display="block";
+    return;
+  }
+
+  if(!token){
+    error.textContent="✗ Session expired. Login again.";
+    error.style.display="block";
+    return;
+  }
+
+  btn.disabled=true;
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Fetching...';
+
+  try{
+    const res=await fetch(baseUrl+"/api/user/nameEnquiry",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+token
+      },
+      body:JSON.stringify({accountNumber})
+    });
+
+    const text=await res.text();
+
+    if(res.ok){
+      resultBox.textContent=text;
+      resultBox.style.display="block";
+
+      success.textContent="✓ Name fetched successfully";
+      success.style.display="block";
+      autoHide(success);
+    }else{
+      error.textContent="✗ "+(text || "Failed");
+      error.style.display="block";
+    }
+
+  }catch{
+    error.textContent="✗ Server error";
+    error.style.display="block";
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<i class="fas fa-id-card"></i> Get Name';
+  }
+
+});
+</script>
+
+</body>
+</html>
+```

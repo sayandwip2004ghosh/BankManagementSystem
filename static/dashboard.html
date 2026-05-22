@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Sayandwip Banking</title>
+  <!-- Developer: Sayandwip Ghosh | sayandwipghosh007@gmail.com -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:"Segoe UI",sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;display:flex;flex-direction:column;}
+    header{background:white;padding:1.2rem 2rem;box-shadow:0 2px 10px rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;}
+    header h1{color:#667eea;font-size:1.6rem;display:flex;align-items:center;gap:0.5rem;}
+    .user-info{display:flex;align-items:center;gap:1.2rem;}
+    .user-name p{color:#333;font-weight:600;margin:0;}
+    .user-name small{color:#888;}
+    .logout-btn{background:#dc3545;color:white;border:none;padding:0.6rem 1.1rem;border-radius:6px;cursor:pointer;font-weight:600;}
+    .balance-bar{background:rgba(255,255,255,0.15);padding:1rem 2rem;text-align:center;color:white;font-size:1.1rem;}
+    .balance-bar strong{font-size:1.5rem;}
+    main{flex:1;padding:2rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;max-width:1100px;margin:0 auto;width:100%;}
+    .card{background:white;border-radius:12px;padding:1.8rem;box-shadow:0 6px 16px rgba(0,0,0,0.1);transition:transform 0.2s;cursor:pointer;text-align:center;}
+    .card:hover{transform:translateY(-4px);}
+    .card-icon{font-size:2.2rem;color:#667eea;margin-bottom:0.8rem;}
+    .card h3{color:#333;margin-bottom:0.4rem;}
+    .card p{color:#888;font-size:0.85rem;margin-bottom:1.2rem;}
+    .card-btn{display:inline-block;padding:0.55rem 1.3rem;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.88rem;}
+
+    /* Modal */
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:100;padding:1rem;}
+    .modal.show{display:flex;}
+    .modal-box{background:white;border-radius:12px;padding:2rem;width:100%;max-width:420px;box-shadow:0 10px 40px rgba(0,0,0,0.2);}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;}
+    .modal-head h3{color:#333;}
+    .close-x{background:none;border:none;font-size:1.4rem;cursor:pointer;color:#888;}
+    .inp{width:100%;padding:0.75rem;border:2px solid #e0e0e0;border-radius:7px;font-size:1rem;margin-bottom:1rem;outline:none;}
+    .inp:focus{border-color:#667eea;}
+    .act-btn{width:100%;padding:0.85rem;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:1rem;}
+    .act-btn:disabled{opacity:0.6;cursor:not-allowed;}
+    .ok{background:#d4edda;color:#155724;padding:0.75rem;border-radius:6px;margin-bottom:0.8rem;display:none;}
+    .err{background:#f8d7da;color:#721c24;padding:0.75rem;border-radius:6px;margin-bottom:0.8rem;display:none;}
+    .result-box{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:1.2rem;border-radius:8px;text-align:center;margin-top:1rem;display:none;}
+    .result-box .big{font-size:1.8rem;font-weight:800;}
+
+    footer{text-align:center;padding:1.5rem;color:rgba(255,255,255,0.8);font-size:0.82rem;}
+    @media(max-width:600px){header{flex-direction:column;gap:0.8rem;} main{padding:1rem;} .user-info{gap:0.8rem;}}
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><i class="fas fa-university"></i> SmartBank</h1>
+  <div class="user-info">
+    <div class="user-name">
+      <p id="userName">Loading...</p>
+      <small id="userAccNo"></small>
+    </div>
+    <button class="logout-btn" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+  </div>
+</header>
+
+<div class="balance-bar" id="balanceBar">
+  <i class="fas fa-spinner fa-spin"></i> Loading balance...
+</div>
+
+<main>
+  <div class="card" onclick="openMod('balMod')">
+    <div class="card-icon"><i class="fas fa-eye"></i></div>
+    <h3>Check Balance</h3>
+    <p>View your current account balance</p>
+    <span class="card-btn">Open</span>
+  </div>
+  <div class="card" onclick="openMod('nameMod')">
+    <div class="card-icon"><i class="fas fa-id-card"></i></div>
+    <h3>Account Name</h3>
+    <p>Verify account holder name</p>
+    <span class="card-btn">Open</span>
+  </div>
+  <div class="card" onclick="openMod('creditMod')">
+    <div class="card-icon"><i class="fas fa-plus-circle"></i></div>
+    <h3>Deposit Money</h3>
+    <p>Add funds to your account</p>
+    <span class="card-btn">Open</span>
+  </div>
+  <div class="card" onclick="openMod('debitMod')">
+    <div class="card-icon"><i class="fas fa-minus-circle"></i></div>
+    <h3>Withdraw Money</h3>
+    <p>Withdraw funds from your account</p>
+    <span class="card-btn">Open</span>
+  </div>
+  <div class="card" onclick="openMod('transferMod')">
+    <div class="card-icon"><i class="fas fa-exchange-alt"></i></div>
+    <h3>Transfer Funds</h3>
+    <p>Send money to another account</p>
+    <span class="card-btn">Open</span>
+  </div>
+  <div class="card" onclick="window.location.href='chatbot.html'">
+    <div class="card-icon"><i class="fas fa-robot"></i></div>
+    <h3>AI Chatbot</h3>
+    <p>Ask the banking assistant</p>
+    <span class="card-btn">Open</span>
+  </div>
+  <div class="card" onclick="window.location.href='transaction.html'">
+    <div class="card-icon"><i class="fas fa-list-alt"></i></div>
+    <h3>Transactions</h3>
+    <p>View bank statement</p>
+    <span class="card-btn">Open</span>
+  </div>
+</main>
+
+<!-- BALANCE MODAL -->
+<div id="balMod" class="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Check Balance</h3><button class="close-x" onclick="closeMod('balMod')">&times;</button></div>
+    <div class="ok" id="balOk"></div><div class="err" id="balErr"></div>
+    <button class="act-btn" onclick="checkBalance()"><i class="fas fa-search"></i> Get Balance</button>
+    <div class="result-box" id="balRes"><div style="font-size:0.85rem;opacity:0.9">Current Balance</div><div class="big" id="balAmt"></div></div>
+  </div>
+</div>
+
+<!-- NAME MODAL -->
+<div id="nameMod" class="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Account Name</h3><button class="close-x" onclick="closeMod('nameMod')">&times;</button></div>
+    <div class="ok" id="nameOk"></div><div class="err" id="nameErr"></div>
+    <button class="act-btn" onclick="getName()"><i class="fas fa-user"></i> Get Name</button>
+    <div class="result-box" id="nameRes"><div style="font-size:0.85rem;opacity:0.9">Account Holder</div><div class="big" id="nameVal"></div></div>
+  </div>
+</div>
+
+<!-- CREDIT MODAL -->
+<div id="creditMod" class="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Deposit Money</h3><button class="close-x" onclick="closeMod('creditMod')">&times;</button></div>
+    <div class="ok" id="creditOk"></div><div class="err" id="creditErr"></div>
+    <input class="inp" type="number" id="creditAmt" placeholder="Enter amount (₹)" min="1"/>
+    <button class="act-btn" id="creditBtn" onclick="doCredit()"><i class="fas fa-plus-circle"></i> Deposit</button>
+  </div>
+</div>
+
+<!-- DEBIT MODAL -->
+<div id="debitMod" class="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Withdraw Money</h3><button class="close-x" onclick="closeMod('debitMod')">&times;</button></div>
+    <div class="ok" id="debitOk"></div><div class="err" id="debitErr"></div>
+    <input class="inp" type="number" id="debitAmt" placeholder="Enter amount (₹)" min="1"/>
+    <button class="act-btn" id="debitBtn" onclick="doDebit()"><i class="fas fa-minus-circle"></i> Withdraw</button>
+  </div>
+</div>
+
+<!-- TRANSFER MODAL -->
+<div id="transferMod" class="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3>Transfer Funds</h3><button class="close-x" onclick="closeMod('transferMod')">&times;</button></div>
+    <div class="ok" id="transferOk"></div><div class="err" id="transferErr"></div>
+    <input class="inp" type="text" id="toAcc" placeholder="Destination account number"/>
+    <input class="inp" type="number" id="transferAmt" placeholder="Amount (₹)" min="1"/>
+    <button class="act-btn" id="transferBtn" onclick="doTransfer()"><i class="fas fa-paper-plane"></i> Transfer</button>
+  </div>
+</div>
+
+<footer>© 2026 Sayandwip Ghosh Banking System &nbsp;·&nbsp; sayandwipghosh007@gmail.com</footer>
+
+<script>
+  const BASE    = "http://localhost:8080";
+  const token   = localStorage.getItem("token");
+  const accNo   = localStorage.getItem("accountNumber");
+  const accName = localStorage.getItem("accountName");
+  const role    = localStorage.getItem("userRole");
+
+  // ── Session check ─────────────────────────────────────────────
+  if (!token) { alert("Please login first"); window.location.href = "index.html"; }
+
+  // ── Session timeout (30 min) ──────────────────────────────────
+  const lt = localStorage.getItem("loginTime");
+  if (lt && (Date.now() - lt) / 60000 > 30) {
+    localStorage.clear(); alert("Session expired. Please login."); window.location.href = "index.html";
+  }
+
+  // ── Load user info ────────────────────────────────────────────
+  document.getElementById("userName").textContent  = "👋 " + (accName || "User");
+  document.getElementById("userAccNo").textContent = "Acc: " + (accNo || "—");
+
+  // ── Auth headers ──────────────────────────────────────────────
+  const headers = { "Content-Type":"application/json", "Authorization":"Bearer "+token };
+
+  // ── Load balance on top bar ───────────────────────────────────
+  async function loadBalanceBar() {
+    try {
+      const res  = await fetch(BASE+"/api/user/balanceEnquiry", {
+        method:"POST", headers,
+        body: JSON.stringify({accountNumber: accNo})
+      });
+      const data = await res.json();
+      if (res.ok) {
+        const bal = data.accountInfo?.accountBalance ?? "—";
+        document.getElementById("balanceBar").innerHTML =
+          `💰 Balance: <strong>₹${Number(bal).toLocaleString("en-IN",{minimumFractionDigits:2})}</strong>`;
+      } else {
+        document.getElementById("balanceBar").textContent = "Balance unavailable";
+      }
+    } catch {
+      document.getElementById("balanceBar").textContent = "Balance unavailable";
+    }
+  }
+  loadBalanceBar();
+
+  // ── Modal helpers ─────────────────────────────────────────────
+  function openMod(id)  { document.getElementById(id).classList.add("show"); }
+  function closeMod(id) { document.getElementById(id).classList.remove("show"); }
+
+  function showOk(id, msg)  { const e=document.getElementById(id); e.textContent=msg; e.style.display="block"; }
+  function showErr(id, msg) { const e=document.getElementById(id); e.textContent=msg; e.style.display="block"; }
+  function hideAll(ids)     { ids.forEach(id => { const e=document.getElementById(id); if(e) e.style.display="none"; }); }
+
+  // ── Check Balance ─────────────────────────────────────────────
+  async function checkBalance() {
+    hideAll(["balOk","balErr","balRes"]);
+    try {
+      const res  = await fetch(BASE+"/api/user/balanceEnquiry",{method:"POST",headers,body:JSON.stringify({accountNumber:accNo})});
+      const data = await res.json();
+      if (res.ok) {
+        const bal = data.accountInfo?.accountBalance ?? 0;
+        document.getElementById("balAmt").textContent =
+          "₹" + Number(bal).toLocaleString("en-IN",{minimumFractionDigits:2});
+        document.getElementById("balRes").style.display = "block";
+        showOk("balOk","✓ Balance fetched successfully");
+        loadBalanceBar();
+      } else { showErr("balErr","✗ "+data.responseMessage); }
+    } catch { showErr("balErr","✗ Server error"); }
+  }
+
+  // ── Get Name ──────────────────────────────────────────────────
+  async function getName() {
+    hideAll(["nameOk","nameErr","nameRes"]);
+    try {
+      const res  = await fetch(BASE+"/api/user/nameEnquiry",{method:"POST",headers,body:JSON.stringify({accountNumber:accNo})});
+      const text = await res.text();
+      if (res.ok) {
+        document.getElementById("nameVal").textContent = text;
+        document.getElementById("nameRes").style.display = "block";
+        showOk("nameOk","✓ Name fetched");
+      } else { showErr("nameErr","✗ "+text); }
+    } catch { showErr("nameErr","✗ Server error"); }
+  }
+
+  // ── Credit ────────────────────────────────────────────────────
+  async function doCredit() {
+    hideAll(["creditOk","creditErr"]);
+    const amt = parseFloat(document.getElementById("creditAmt").value);
+    if (!amt || amt <= 0) { showErr("creditErr","✗ Enter valid amount"); return; }
+    const btn = document.getElementById("creditBtn");
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    try {
+      const res  = await fetch(BASE+"/api/user/credit",{method:"POST",headers,body:JSON.stringify({accountNumber:accNo,amount:amt})});
+      const data = await res.json();
+      if (res.ok) {
+        showOk("creditOk","✓ "+data.responseMessage);
+        document.getElementById("creditAmt").value="";
+        loadBalanceBar();
+      } else { showErr("creditErr","✗ "+data.responseMessage); }
+    } catch { showErr("creditErr","✗ Server error"); }
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-plus-circle"></i> Deposit';
+  }
+
+  // ── Debit ─────────────────────────────────────────────────────
+  async function doDebit() {
+    hideAll(["debitOk","debitErr"]);
+    const amt = parseFloat(document.getElementById("debitAmt").value);
+    if (!amt || amt <= 0) { showErr("debitErr","✗ Enter valid amount"); return; }
+    const btn = document.getElementById("debitBtn");
+    btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+    try {
+      const res  = await fetch(BASE+"/api/user/debit",{method:"POST",headers,body:JSON.stringify({accountNumber:accNo,amount:amt})});
+      const data = await res.json();
+      if (res.ok) {
+        showOk("debitOk","✓ "+data.responseMessage);
+        document.getElementById("debitAmt").value="";
+        loadBalanceBar();
+      } else { showErr("debitErr","✗ "+data.responseMessage); }
+    } catch { showErr("debitErr","✗ Server error"); }
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-minus-circle"></i> Withdraw';
+  }
+
+  // ── Transfer ──────────────────────────────────────────────────
+  async function doTransfer() {
+    hideAll(["transferOk","transferErr"]);
+    const toAcc = document.getElementById("toAcc").value.trim();
+    const amt   = parseFloat(document.getElementById("transferAmt").value);
+    if (!toAcc)        { showErr("transferErr","✗ Enter destination account"); return; }
+    if (!amt||amt<=0)  { showErr("transferErr","✗ Enter valid amount"); return; }
+    if (toAcc===accNo) { showErr("transferErr","✗ Cannot transfer to same account"); return; }
+    const btn = document.getElementById("transferBtn");
+    btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+    try {
+      const res  = await fetch(BASE+"/api/user/transfer",{method:"POST",headers,
+        body:JSON.stringify({sourceAccountNumber:accNo,destinationAccountNumber:toAcc,amount:amt})});
+      const data = await res.json();
+      if (res.ok) {
+        showOk("transferOk","✓ "+data.responseMessage);
+        document.getElementById("toAcc").value="";
+        document.getElementById("transferAmt").value="";
+        loadBalanceBar();
+      } else { showErr("transferErr","✗ "+data.responseMessage); }
+    } catch { showErr("transferErr","✗ Server error"); }
+    btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> Transfer';
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "index.html";
+  }
+</script>
+</body>
+</html>

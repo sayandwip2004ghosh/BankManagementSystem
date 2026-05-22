@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Sayandwip Banking System</title>
+    <!-- Developed by Sayandwip Ghosh | sayandwipghosh007@gmail.com -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header-content h1 {
+        color: #1e3c72;
+        font-size: 2.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .header-content .dev-credit {
+        font-size: 0.8rem;
+        color: #888;
+        margin-top: 0.4rem;
+      }
+
+      .header-info {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .admin-badge {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logout-btn {
+        background: #f5576c;
+        color: white;
+        border: none;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+
+      .logout-btn:hover {
+        background: #e63946;
+        transform: translateY(-2px);
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s;
+        border-left: 5px solid #f5576c;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      }
+
+      .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .feature-card h3 {
+        color: #1e3c72;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+
+      .feature-card p {
+        color: #555;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .feature-details {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: #333;
+      }
+
+      .feature-details strong {
+        color: #1e3c72;
+      }
+
+      .status-badge {
+        display: inline-block;
+        background: #28a745;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+      }
+
+      .stats-section {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+
+      .footer {
+        text-align: center;
+        color: white;
+        margin-top: 3rem;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+
+      .api-endpoints {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+      }
+
+      .endpoint-list {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .endpoint {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+      }
+
+      .endpoint-method {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-right: 0.5rem;
+      }
+
+      .endpoint-path {
+        font-family: "Courier New", monospace;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .endpoint-desc {
+        color: #555;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+      }
+
+      @media (max-width: 768px) {
+        header {
+          flex-direction: column;
+          text-align: center;
+          gap: 1.5rem;
+        }
+
+        .header-info {
+          flex-direction: column;
+          width: 100%;
+        }
+
+        .header-content h1 {
+          font-size: 1.8rem;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+
+      <!-- Header -->
+      <header>
+        <div class="header-content">
+          <h1><i class="fas fa-shield-alt"></i> Sayandwip Admin Dashboard</h1>
+          <div class="dev-credit">
+            Developed by Sayandwip Ghosh &mdash; sayandwipghosh007@gmail.com
+          </div>
+        </div>
+        <div class="header-info">
+          <div class="admin-badge">
+            <i class="fas fa-crown"></i> Administrator
+          </div>
+          <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </header>
+
+      <!-- Admin Stats -->
+      <div class="stats-section">
+        <h2 style="color: #1e3c72; margin-bottom: 1.5rem">
+          <i class="fas fa-chart-bar"></i> System Statistics
+        </h2>
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card">
+            <div class="stat-value" id="totalAccounts">--</div>
+            <div class="stat-label">Total Accounts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="adminAccount">--</div>
+            <div class="stat-label">Admin Account Number</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="currentBalance">₹--</div>
+            <div class="stat-label">Admin Balance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Features -->
+      <div style="margin-bottom: 2rem">
+        <h2 style="color: white; margin-bottom: 1.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+          <i class="fas fa-cogs"></i> Available Admin Features
+        </h2>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">👤</div>
+          <h3>Account Management</h3>
+          <p>Create, view, and manage bank accounts with complete user details.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>Create new user accounts</li>
+              <li>Assign unique account numbers</li>
+              <li>Store user information</li>
+              <li>Track account creation date</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>Authentication &amp; Security</h3>
+          <p>Secure login with JWT token-based authentication and role-based access control.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>User login with JWT tokens</li>
+              <li>Role-based access control (ROLE_ADMIN, ROLE_USER)</li>
+              <li>Secure password encryption (BCrypt)</li>
+              <li>Email notifications on login</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💰</div>
+          <h3>Balance Management</h3>
+          <p>Check and manage account balances with real-time updates.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>View account balance</li>
+              <li>Track balance history</li>
+              <li>Real-time balance updates</li>
+              <li>Balance enquiry by account number</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">➕</div>
+          <h3>Credit Operations</h3>
+          <p>Deposit and credit money to accounts with transaction tracking.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>Deposit funds to accounts</li>
+              <li>Credit operations with amounts</li>
+              <li>Automatic transaction logging</li>
+              <li>Instant balance update</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">➖</div>
+          <h3>Debit Operations</h3>
+          <p>Withdraw funds from accounts with balance validation.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>Withdraw funds from accounts</li>
+              <li>Balance validation before debit</li>
+              <li>Overdraft prevention</li>
+              <li>Transaction confirmation</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💸</div>
+          <h3>Fund Transfers</h3>
+          <p>Transfer money between accounts with comprehensive tracking.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>Transfer between accounts</li>
+              <li>Recipient validation</li>
+              <li>Dual-sided transaction logging</li>
+              <li>Transfer status tracking</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3>Account Enquiry</h3>
+          <p>Query account information including holder names and details.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>Name enquiry by account number</li>
+              <li>Account holder details</li>
+              <li>Account status verification</li>
+              <li>Contact information lookup</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📄</div>
+          <h3>Bank Statements</h3>
+          <p>Generate detailed transaction history and bank statements in PDF format.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>Generate statements for date range</li>
+              <li>PDF export capability</li>
+              <li>Transaction history view</li>
+              <li>Full transaction details</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📧</div>
+          <h3>Email Notifications</h3>
+          <p>Send automated email alerts for important account activities.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>Account creation notifications</li>
+              <li>Login alerts</li>
+              <li>Transaction confirmations</li>
+              <li>Account status updates</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>Chatbot Support</h3>
+          <p>AI-powered chatbot for common banking queries and operations.</p>
+          <div class="feature-details">
+            <strong>Capabilities:</strong>
+            <ul style="margin-top: 0.5rem; padding-left: 1.5rem">
+              <li>Balance enquiry via chat</li>
+              <li>Account name lookup</li>
+              <li>Fund transfers via chat</li>
+              <li>Deposit/withdrawal requests</li>
+            </ul>
+          </div>
+          <span class="status-badge">✓ Active</span>
+        </div>
+      </div>
+
+      <!-- API Endpoints -->
+      <div class="api-endpoints">
+        <h2 style="color: #1e3c72; margin-bottom: 1.5rem">
+          <i class="fas fa-code"></i> Available API Endpoints
+        </h2>
+        <div class="endpoint-list">
+          <div class="endpoint">
+            <span class="endpoint-method">POST</span>
+            <span class="endpoint-path">/api/user</span>
+            <div class="endpoint-desc">Create a new user account</div>
+          </div>
+          <div class="endpoint">
+            <span class="endpoint-method">POST</span>
+            <span class="endpoint-path">/api/user/login</span>
+            <div class="endpoint-desc">User login with email and password</div>
+          </div>
+          <div class="endpoint">
+            <span class="endpoint-method">POST</span>
+            <span class="endpoint-path">/api/user/balanceEnquiry</span>
+            <div class="endpoint-desc">Check account balance</div>
+          </div>
+          <div class="endpoint">
+            <span class="endpoint-method">POST</span>
+            <span class="endpoint-path">/api/user/nameEnquiry</span>
+            <div class="endpoint-desc">Get account holder name</div>
+          </div>
+          <div class="endpoint">
+            <span class="endpoint-method">POST</span>
+            <span class="endpoint-path">/api/user/credit</span>
+            <div class="endpoint-desc">Credit funds to account</div>
+          </div>
+          <div class="endpoint">
+            <span class="endpoint-method">POST</span>
+            <span class="endpoint-path">/api/user/debit</span>
+            <div class="endpoint-desc">Debit funds from account</div>
+          </div>
+          <div class="endpoint">
+            <span class="endpoint-method">POST</span>
+            <span class="endpoint-path">/api/user/transfer</span>
+            <div class="endpoint-desc">Transfer funds between accounts</div>
+          </div>
+          <div class="endpoint">
+            <span class="endpoint-method">GET</span>
+            <span class="endpoint-path">/bankStatement</span>
+            <div class="endpoint-desc">Generate bank statement (date range)</div>
+          </div>
+          <div class="endpoint">
+            <span class="endpoint-method">POST</span>
+            <span class="endpoint-path">/chatbot/ask</span>
+            <div class="endpoint-desc">Chat with banking assistant</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          <i class="fas fa-lock"></i> Secured with JWT Authentication &amp;
+          Role-Based Access Control
+        </p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem; opacity: 0.8;">
+          sayandwipghosh007@gmail.com
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.9rem">
+          &copy; 2026 Sayandwip Banking System &mdash; All Rights Reserved
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Sayandwip Banking System
+      // Developer: Sayandwip Ghosh
+      // Contact: sayandwipghosh007@gmail.com
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("totalAccounts").textContent = "2+";
+        document.getElementById("adminAccount").textContent = "2026931279";
+        document.getElementById("currentBalance").textContent = "₹53,000";
+      });
+
+      function logout() {
+        if (confirm("Are you sure you want to logout?")) {
+          localStorage.removeItem("authToken");
+          window.location.href = "index.html";
+        }
+      }
+    </script>
+  </body>
+</html>

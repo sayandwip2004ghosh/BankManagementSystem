@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transfer Money - Banking System</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      color: #667eea;
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    nav {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #667eea;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+    }
+
+    nav a:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-header h2 {
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 6px;
+      border: 2px solid #ddd;
+    }
+
+    input:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      margin-top: 1rem;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #fd7e14, #ffc107);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .success-message,
+    .error-message {
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1><i class="fas fa-university"></i> Banking System</h1>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</header>
+
+<nav>
+  <a href="dashboard.html">Dashboard</a>
+  <a href="balance-enquiry.html">Balance</a>
+  <a href="credit-amount.html">Credit</a>
+  <a href="debit-amount.html">Debit</a>
+</nav>
+
+<main>
+  <div class="form-container">
+    <div class="form-header">
+      <h2>Transfer Money</h2>
+    </div>
+
+    <div id="successMsg" class="success-message"></div>
+    <div id="errorMsg" class="error-message"></div>
+
+    <form id="transferForm">
+      <div class="form-group">
+        <label>From Account</label>
+        <input type="text" id="fromAccountNumber" required />
+      </div>
+
+      <div class="form-group">
+        <label>To Account</label>
+        <input type="text" id="toAccountNumber" required />
+      </div>
+
+      <div class="form-group">
+        <label>Amount</label>
+        <input type="number" id="amount" required />
+      </div>
+
+      <button type="submit" id="submitBtn">
+        Transfer
+      </button>
+    </form>
+  </div>
+</main>
+
+<footer>
+  © 2026 Banking System
+</footer>
+
+<script>
+const baseUrl = "http://localhost:8080";
+
+// Redirect if not logged in
+if (!localStorage.getItem("token")) {
+  window.location.href = "login-modern.html";
+}
+
+// Autofill account
+window.onload = () => {
+  const acc = localStorage.getItem("accountNumber");
+  if (acc) {
+    document.getElementById("fromAccountNumber").value = acc;
+  }
+};
+
+function logout() {
+  localStorage.clear();
+  window.location.href = "login-modern.html";
+}
+
+document.getElementById("transferForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const successMsg = document.getElementById("successMsg");
+  const errorMsg = document.getElementById("errorMsg");
+  const btn = document.getElementById("submitBtn");
+
+  successMsg.style.display = "none";
+  errorMsg.style.display = "none";
+
+  const from = document.getElementById("fromAccountNumber").value;
+  const to = document.getElementById("toAccountNumber").value;
+  const amount = parseFloat(document.getElementById("amount").value);
+
+  if (amount <= 0) {
+    errorMsg.textContent = "Amount must be greater than 0";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  if (from === to) {
+    errorMsg.textContent = "Cannot transfer to same account";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Processing...";
+
+  try {
+    const res = await fetch(`${baseUrl}/api/user/transfer`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      },
+      body: JSON.stringify({
+        sourceAccountNumber: from,
+        destinationAccountNumber: to,
+        amount: amount
+      })
+    });
+
+    const result = await res.json();
+
+    if (res.ok) {
+      successMsg.textContent = result.responseMessage;
+      successMsg.style.display = "block";
+      document.getElementById("transferForm").reset();
+
+      const acc = localStorage.getItem("accountNumber");
+      if (acc) document.getElementById("fromAccountNumber").value = acc;
+    } else {
+      errorMsg.textContent = result.responseMessage;
+      errorMsg.style.display = "block";
+    }
+
+  } catch (err) {
+    errorMsg.textContent = "Server error. Try again.";
+    errorMsg.style.display = "block";
+  }
+
+  btn.disabled = false;
+  btn.textContent = "Transfer";
+});
+</script>
+
+</body>
+</html>
