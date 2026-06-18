@@ -26,7 +26,7 @@ A full-stack banking web application with secure JWT authentication, real-time t
 
 **Prerequisites:** Java 17, Maven, MySQL 8
 
-```bash
+bash
 # Create database
 mysql -u root -p -e "CREATE DATABASE bank;"
 
@@ -38,34 +38,34 @@ export MAIL_PASSWORD=your-app-password
 # Run
 cd backend
 ./mvnw spring-boot:run
-```
+
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|---|---|---|
-| `DB_URL` | MySQL JDBC URL | `jdbc:mysql://localhost:3306/bank` |
-| `DB_USERNAME` | DB username | `root` |
-| `DB_PASSWORD` | DB password | *(required)* |
-| `MAIL_USERNAME` | Gmail address | *(required for email alerts)* |
-| `MAIL_PASSWORD` | Gmail App Password | *(required for email alerts)* |
-| `JWT_SECRET` | Base64 JWT signing key | *(change in production!)* |
-| `JWT_EXPIRATION` | Token TTL in ms | `86400000` (24h) |
+| Variable        | Description           |                    Default         |
+|--------------   |-----------------------|------------------------------------|
+| `DB_URL`        | MySQL JDBC URL        | `jdbc:mysql://localhost:3306/bank` |
+| `DB_USERNAME`   | DB username           | `root`                             |
+| `DB_PASSWORD`   | DB password           | *(required)*                       |
+| `MAIL_USERNAME` | Gmail address         | *(required for email alerts)*      |
+| `MAIL_PASSWORD` | Gmail App Password    | *(required for email alerts)*      |
+| `JWT_SECRET`    | Base64 JWT signing key| *(change in production!)*          |
+| `JWT_EXPIRATION`| Token TTL in ms       | `86400000` (24h)                   |
 
 ## API Endpoints
 
-| Method | URL | Auth | Description |
-|---|---|---|---|
-| POST | `/api/user` | No | Create account |
-| POST | `/api/user/login` | No | Login → JWT |
-| POST | `/api/user/balanceEnquiry` | JWT | Get balance |
-| POST | `/api/user/nameEnquiry` | JWT | Get account name |
-| POST | `/api/user/credit` | JWT | Deposit money |
-| POST | `/api/user/debit` | JWT | Withdraw money |
-| POST | `/api/user/transfer` | JWT | Transfer funds |
-| GET | `/bankStatement` | JWT | Get transactions (PDF + list) |
-| POST | `/chatbot/ask` | No | AI chatbot |
-| GET | `/swagger-ui.html` | No | API docs |
+| Method |              URL           | Auth |   Description  |
+|--------|----------------------------|------|----------------|
+| POST   | `/api/user`                | No   | Create account |
+| POST   | `/api/user/login`          | No   | Login → JWT    |
+| POST   | `/api/user/balanceEnquiry` | JWT  | Get balance    |
+| POST   | `/api/user/nameEnquiry`    | JWT  |Get account name|
+| POST   | `/api/user/credit`         | JWT  | Deposit money  |
+| POST   | `/api/user/debit`          | JWT  | Withdraw money |
+| POST   | `/api/user/transfer`       | JWT  | Transfer funds |
+| GET    | `/bankStatement`           | JWT  |Get transactions (PDF + list) |
+| POST   | `/chatbot/ask`             | No   | AI chatbot     |
+| GET    | `/swagger-ui.html`         | No   |   API docs     |
 
 ## Chatbot Commands
 
